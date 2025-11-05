@@ -1,13 +1,14 @@
+import { Link } from 'react-router-dom'
+
 export default function Header(){
-    return <header>
-    <h1>Justin Madren's Jovial Mountain lion || ITIS - 3135</h1>
-    <nav>
-        <a href="index.html">Home </a> ||
-        <a href="introduction.html"> Introduction </a> ||
-        <a href="contract.html"> Contract </a> ||
-        <a href="website_evaluations.html"> CRAP Webpage Evaluations </a> ||
-        <a href="fccfsjs_outline.html"> JavaScript Curriculum </a>||
-        <a href="formsubmition.html"> Form Submition</a>
-    </nav>
-    </header>;
+        return (
+            <header>
+                <h1>Justin Madren's Jovial Mountain lion || ITIS - 3135</h1>
+                <nav>
+                    <Link to="/">Home</Link> ||{' '}
+                    <Link to="/introduction">Introduction</Link> ||{' '}
+                    <Link to="/contract">Contract</Link>
+                </nav>
+            </header>
+        )
 }

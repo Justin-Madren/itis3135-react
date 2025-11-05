@@ -1,0 +1,189 @@
+header{
+    text-align: center;
+    font-family: 'Inter', Courier, monospace;
+    padding: 30px 0;
+    border-radius: 25px;
+}
+nav{
+    padding-top: 15px;
+}
+body{
+    background-color: blanchedalmond;
+}
+h2{
+    text-align: center;
+    font-family: 'Inter', Courier, monospace;
+    margin: auto;
+    padding-bottom: 10px;
+}
+img{
+    margin: auto;
+    display: block;
+    border-radius: 25px;
+    border: 3px solid black;
+    margin-bottom: 20px;
+}
+h3{
+    font-family: 'Inter', Courier, monospace;
+    margin: auto;
+    text-align: center;
+    padding-bottom: 15px;
+}
+p{
+    font-family: 'Roboto';
+    width: 70%;
+    margin: 0 auto;
+    text-align: left; 
+}
+footer p{
+    padding-top: 10px;
+    text-align: center;
+}
+ul{
+    width: 70%;
+    padding-top: 15px;
+    padding-bottom: 15px;
+    margin: 0 auto;
+    text-align: left; 
+}
+.divider{
+    width: 90%;
+    border-bottom: 3px solid black;
+    margin: 0 auto 0;
+}
+
+.background{
+    margin-bottom: 30px;
+}
+
+.classes{
+    margin-top: 30px;
+    margin-bottom: 30px;
+}
+a{
+    color: darkgreen;
+}
+a:hover{
+    color: goldenrod;
+    text-decoration: underline;
+}
+table, th, td{
+    border: 2px solid black;
+    border-collapse: collapse;
+}
+table{
+    margin: auto;
+    background-color: darkgreen;
+    color: goldenrod; 
+}
+th, td{
+    padding-left: 15px;
+    padding-right: 15px;
+}
+/* Center the form and add spacing */
+#introForm {
+    max-width: 700px;
+    margin: 20px auto;       /* center horizontally and add vertical spacing */
+    padding: 20px;
+    background-color: #fff;  /* white background */
+    border-radius: 10px;
+}
+
+/* Fieldsets */
+#introForm fieldset {
+    border: 1px solid #333;
+    padding: 10px 15px;
+    margin-bottom: 15px;
+}
+
+/* Inputs and textareas */
+#introForm input,
+#introForm textarea {
+    width: 100%;
+    padding: 8px;
+    margin: 5px 0 10px 0;
+    border: 1px solid #333;
+    border-radius: 5px;
+    box-sizing: border-box;
+}
+
+/* Buttons */
+#introForm .buttons button {
+    padding: 8px 12px;
+    margin: 5px;
+    border: none;
+    border-radius: 5px;
+    background-color: darkgreen;
+    color: white;
+    cursor: pointer;
+}
+
+#introForm .buttons button:hover {
+    background-color: goldenrod;
+    color: black;
+}
+
+/* Courses layout */
+#courseList .course {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+#courseList .course input {
+    flex: 1;
+}
+
+@media screen and (max-width: 600px) {
+    p {
+        width: 90%;            
+        font-size: 14px;       
+    }
+
+    ul {
+        width: 90%;            
+        font-size: 14px;
+    }
+
+    img {
+        max-width: 95%;        
+        height: auto;          
+    }
+
+    table, th, td {
+        font-size: 12px;       
+        padding: 5px;
+    }
+}
+
+@media screen and (min-width: 601px) and (max-width: 980px) {
+     p {
+        width: 85%;
+        font-size: 15px;
+    }
+
+    ul {
+        width: 80%;
+        font-size: 15px;
+    }
+
+    img {
+        max-width: 80%;
+    }
+}
+
+@media screen and (min-width: 981px) and (max-width: 1400px) {
+    p {
+        width: 75%;
+        font-size: 16px;
+    }
+
+    ul {
+        width: 70%;
+        font-size: 16px;
+    }
+
+    img {
+        max-width: 70%;
+    }
+}
