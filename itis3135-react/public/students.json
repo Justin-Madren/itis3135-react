@@ -1,0 +1,101 @@
+[
+  {
+    "id": "jm-101",
+    "name": "Justin",
+    "middleInitial": "M.",
+    "lastName": "Madren",
+    "pronouns": "he/him",
+    "email": "justin@example.com",
+    "major": "Computer Science",
+    "media": { "src": "assets/HeadShot2024-CjH0u7CM.jpg", "alt": "Justin Headshot" },
+    "personalStatement": "Hello — I'm a student in ITIS-3135. I enjoy building full stack apps and tinkering with web performance.",
+    "courses": ["ITIS-3135", "ITIS-3132"]
+  },
+  {
+    "id": "sample-002",
+    "firstName": "Jamie",
+    "last": "Rivers",
+    "pronouns": "they/them",
+    "photo": "https://via.placeholder.com/150",
+    "photoAlt": "Sample student photo",
+    "personalStatment": "My name is Jamie, I study data science and I'm excited for this course.",
+    "courses": [
+      { "code": "STAT-200", "name": "Intro to Statistics" },
+      { "code": "DS-101", "name": "Data Science Foundations" }
+    ]
+  }
+  {
+    "prefix": "jmadren1",
+    "name": {
+      "first": "Justin",
+      "middleInitial": "M",
+      "last": "Madren",
+      "preferred": ""
+    },
+    "acknowledgement": "I acknowledge that the information that is post is public",
+    "acknowledgementDate": "2025-11-24",
+    "mascot": "Jovial Mountain Lion",
+    "divider": "|",
+    "platform": {
+      "device": "A Dell Latitude 3550 laptop running windows 11 primary work location is my apartment",
+      "os": "Windows"
+    },
+    "backgrounds": {
+      "personal": "I am a first generation college student meaning I am the first in my family to attend a four year university in pursuit of a bachelor's degree. I am an eagle scout and have been to the Philmont scouting range for a 11 day long backpacking trip.",
+      "professional": "I have volunteered at my local church in the audio visual team from 2014 to today",
+      "academic": "Senior Computer Science Major with a Concentration in Cyber Security",
+      "subject": ""
+    },
+    "courses": [
+      {
+        "dept": "ITSC",
+        "num": "3146",
+        "name": "Intro into Operating Systems and Networking",
+        "reason": "To understand how the OS functions and how networks work and how they are connected because everything has some form of networking because that is how computers talk to each other.",
+        "code": "ITSC-3146"
+      },
+      {
+        "dept": "ITIS",
+        "num": "3200",
+        "name": "Intro into Security and Privacy",
+        "reason": "My consternation is in cyber security and this is the class where I am going to learn about the security and privacy aspects of the programming world.",
+        "code": "ITIS-3200"
+      },
+      {
+        "dept": "ITSC",
+        "num": "3155",
+        "name": "Software Engineering",
+        "reason": "To build the skills and knowledge of how to work in a group for a project and doing it using github.",
+        "code": "ITSC-3155"
+      },
+      {
+        "dept": "ITIS",
+        "num": "3135",
+        "name": "Front-End Web App Development",
+        "reason": "For an understanding of how web sites are built and how they work.",
+        "code": "ITIS-3135"
+      }
+    ],
+    "personalStatement": " Hello my name is Justin Madren this will be my senior year at UNCC. I enjoy playing video games right now. I am working my way through Balders Gate 3 in honor mode, I also enjoy drawing traditionally and on my tablet from time to time.",
+    "quote": {
+      "text": "That a person who helps others simply because it should or must be done, and because it is the right thing to do, is indeed without a doubt a real superhero",
+      "author": "Stan Lee"
+    },
+    "funFact": "I am a eagle scout",
+    "additional": "",
+    "links": {
+      "charlotte": "https://webpages.charlotte.edu/jmadren1/",
+      "github": "https://github.com/Justin-Madren",
+      "githubio": "https://justin-madren.github.io/",
+      "itis3135": "https://justin-madren.github.io/itis3135/",
+      "freecodecamp": "https://www.freecodecamp.org/jmadren1",
+      "codecademy": "https://www.codecademy.com/profiles/Jmadren1",
+      "linkedin": "https://www.linkedin.com/in/justin-madren/"
+    },
+    "media": {
+      "hasImage": true,
+      "src": "/media/2025-fall/itis-3135/jmadren1-1764018724226.jpg",
+      "caption": "A photo of Justin Madren from the neck with a gray background"
+    }
+  }
+]

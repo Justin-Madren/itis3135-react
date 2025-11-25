@@ -4,6 +4,7 @@ import Header from './Header.jsx'
 import Footer from './Footer.jsx'
 import Home from './Home.jsx'
 import Introduction from './Introduction.jsx'
+import Introductions from './jsonintroductions.jsx'
 import Contract from './Contract.jsx'
 
 
@@ -19,6 +20,7 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/introduction" element={<Introduction />} />
         <Route path="/contract" element={<Contract />} />
+        <Route path="/jsonintroductions"  element={<Introductions />} />
       </Routes>
 
       <Footer />
