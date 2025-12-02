@@ -12,7 +12,9 @@ export default function JsonIntroductions() {
     const [showMascot, setShowMascot] = useState(true);
     const [showImage, setShowImage] = useState(true);
     const [showStatement, setShowStatement] = useState(true);
-    const [showBackgrounds, setShowBackgrounds] = useState(true); // includes computer & classes
+    const [showBackgrounds, setShowBackgrounds] = useState(true);
+    const [showClasses, setShowClasses] = useState(true);
+    const [showExtra, setShowExtra] = useState(true); // computer, funFact, additional
     const [showQuote, setShowQuote] = useState(true);
     const [showLinks, setShowLinks] = useState(true);
     // slideshow state
@@ -194,7 +196,9 @@ export default function JsonIntroductions() {
                 <button className={"toggle-btn" + (showMascot ? " active" : "")} onClick={() => setShowMascot(v => !v)}>Mascot</button>
                 <button className={"toggle-btn" + (showImage ? " active" : "")} onClick={() => setShowImage(v => !v)}>Image</button>
                 <button className={"toggle-btn" + (showStatement ? " active" : "")} onClick={() => setShowStatement(v => !v)}>Personal Statement</button>
-                <button className={"toggle-btn" + (showBackgrounds ? " active" : "")} onClick={() => setShowBackgrounds(v => !v)}>Backgrounds & Classes</button>
+                <button className={"toggle-btn" + (showBackgrounds ? " active" : "")} onClick={() => setShowBackgrounds(v => !v)}>Backgrounds</button>
+                <button className={"toggle-btn" + (showClasses ? " active" : "")} onClick={() => setShowClasses(v => !v)}>Classes</button>
+                <button className={"toggle-btn" + (showExtra ? " active" : "")} onClick={() => setShowExtra(v => !v)}>Extra Information</button>
                 <button className={"toggle-btn" + (showQuote ? " active" : "")} onClick={() => setShowQuote(v => !v)}>Quote</button>
                 <button className={"toggle-btn" + (showLinks ? " active" : "")} onClick={() => setShowLinks(v => !v)}>Links</button>
                 {/* slideshow toggle */}
@@ -308,6 +312,8 @@ export default function JsonIntroductions() {
                                     const quoteAuthor = student.quote?.author ?? student.quoteBy ?? student.quoteAuthor;
 
                                     const courses = getCoursesForStudent(student);
+                                    // normalized funFact (support different field names)
+                                    const funFact = student.funFact ?? student.funfact ?? student['fun_fact'] ?? student.additional ?? null;
 
                                     return (
                                         <>
@@ -366,13 +372,18 @@ export default function JsonIntroductions() {
                                                     </li>
                                                 ) : null}
 
-                                                {showBackgrounds && (primaryDevice) ? (
+                                                {showExtra && (primaryDevice) ? (
                                                     <li>
                                                         <strong>Primary Computer:</strong> {primaryDevice}
                                                     </li>
                                                 ) : null}
-
-                                                {showBackgrounds ? (
+                                                {/* Fun fact / extra information - show directly under primary computer */}
+                                                {showExtra && funFact ? (
+                                                    <li>
+                                                        <strong>Fun Fact:</strong> {funFact}
+                                                    </li>
+                                                ) : null}
+                                                {showClasses ? (
                                                 <li>
                                                     <strong>Courses I’am Taking and Why</strong>
                                                     {Array.isArray(courses) && courses.length > 0 ? (
@@ -396,6 +407,8 @@ export default function JsonIntroductions() {
                                                         </div>
                                                     </li>
                                                 ) : null}
+
+                                                {/* funFact already displayed earlier (under Primary Computer) */}
 
                                                 {showLinks && student.links && typeof student.links === 'object' ? (
                                                     <li>
@@ -451,6 +464,8 @@ export default function JsonIntroductions() {
 
                 // Courses — support multiple possible field names
                 const courses = getCoursesForStudent(student);
+                // normalized funFact (support different field names)
+                const funFact = student.funFact ?? student.funfact ?? student['fun_fact'] ?? student.additional ?? null;
 
                 return (
                     <article key={student.id ?? i} className="introduction-card">
@@ -523,13 +538,19 @@ export default function JsonIntroductions() {
                                 </li>
                             ) : null}
 
-                            {showBackgrounds && (primaryDevice) ? (
+                            {showExtra && (primaryDevice) ? (
                                 <li>
                                     <strong>Primary Computer:</strong> {primaryDevice}
                                 </li>
                             ) : null}
 
-                            {showBackgrounds ? (
+                            {showExtra && funFact ? (
+                                <li>
+                                    <strong>Fun Fact:</strong> {funFact}
+                                </li>
+                            ) : null}
+
+                            {showClasses ? (
                             <li>
                                 <strong>Courses I’am Taking and Why</strong>
                                 {Array.isArray(courses) && courses.length > 0 ? (
@@ -560,6 +581,8 @@ export default function JsonIntroductions() {
                                     </div>
                                 </li>
                             ) : null}
+
+                            {/* funFact moved above (displayed under Primary Computer) */}
 
                             {/* optional links */}
                             {showLinks && student.links && typeof student.links === 'object' ? (
