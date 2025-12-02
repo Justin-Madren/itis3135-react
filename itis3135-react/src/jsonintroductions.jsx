@@ -5,6 +5,19 @@ export default function JsonIntroductions() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [baseUrl, setBaseUrl] = useState(null); // origin used when we fetched remote data (e.g. https://dvonb.xyz)
+    const [nameSearch, setNameSearch] = useState("");
+
+    // visibility toggles (default to visible)
+    const [showName, setShowName] = useState(true);
+    const [showMascot, setShowMascot] = useState(true);
+    const [showImage, setShowImage] = useState(true);
+    const [showStatement, setShowStatement] = useState(true);
+    const [showBackgrounds, setShowBackgrounds] = useState(true); // includes computer & classes
+    const [showQuote, setShowQuote] = useState(true);
+    const [showLinks, setShowLinks] = useState(true);
+    // slideshow state
+    const [slideshowOn, setSlideshowOn] = useState(false);
+    const [slideshowIndex, setSlideshowIndex] = useState(0);
 
     useEffect(() => {
         // Try to load a local JSON first (public/students.json), then fallback to the remote API
@@ -57,6 +70,13 @@ export default function JsonIntroductions() {
 
         load();
     }, []);
+
+    // keep slideshow index sensible when filter or data changes
+    useEffect(() => {
+        if (!slideshowOn) return;
+        // when the search/filter changes or the data updates, start slideshow at the beginning
+        setSlideshowIndex(0);
+    }, [nameSearch, introductions, slideshowOn]);
 
     // Normalize different shapes of JSON responses into an array of student objects
     function normalizeData(raw) {
@@ -152,9 +172,252 @@ export default function JsonIntroductions() {
     return (
         <main>
             <h2>Student Introductions</h2>
-            {introductions.map((student, i) => {
+            <div className="search-row">
+                <label className="search-label">Search for student</label>
+                <input
+                    className="search-input"
+                    type="text"
+                    placeholder="Search students by name..."
+                    value={nameSearch}
+                    onChange={(event) => setNameSearch(event.target.value)}
+                    aria-label="Search students by name"
+                />
+                <div className="search-status">Currently: <strong>{nameSearch || 'All'}</strong></div>
+            </div>
+            
+
+            {/* create a filtered list from the search string (case-insensitive substring match across common name fields) */}
+
+            {/* Toggle controls */}
+            <div className="toggle-controls">
+                <button className={"toggle-btn" + (showName ? " active" : "")} onClick={() => setShowName(v => !v)}>Name</button>
+                <button className={"toggle-btn" + (showMascot ? " active" : "")} onClick={() => setShowMascot(v => !v)}>Mascot</button>
+                <button className={"toggle-btn" + (showImage ? " active" : "")} onClick={() => setShowImage(v => !v)}>Image</button>
+                <button className={"toggle-btn" + (showStatement ? " active" : "")} onClick={() => setShowStatement(v => !v)}>Personal Statement</button>
+                <button className={"toggle-btn" + (showBackgrounds ? " active" : "")} onClick={() => setShowBackgrounds(v => !v)}>Backgrounds & Classes</button>
+                <button className={"toggle-btn" + (showQuote ? " active" : "")} onClick={() => setShowQuote(v => !v)}>Quote</button>
+                <button className={"toggle-btn" + (showLinks ? " active" : "")} onClick={() => setShowLinks(v => !v)}>Links</button>
+                {/* slideshow toggle */}
+                <button
+                    className={"toggle-btn slideshow-toggle" + (slideshowOn ? " active" : "")}
+                    onClick={() => {
+                        // turning slideshow off should reset the index; turning on will start at 0
+                        setSlideshowOn(s => {
+                            const next = !s;
+                            if (!next) setSlideshowIndex(0);
+                            return next;
+                        });
+                    }}
+                >Slideshow</button>
+            </div>
+            {(() => {
+                const q = (nameSearch || "").trim().toLowerCase();
+
+                function matchesName(student, q) {
+                    if (!q) return true; // empty query matches everything
+
+                    // Gather potential name strings from common fields
+                    const candidates = [];
+                    try {
+                        const full = getFullName(student);
+                        if (full) candidates.push(full);
+                    } catch (e) { /* ignore */ }
+
+                    // name can be an object
+                    if (student.name && typeof student.name === 'object') {
+                        const n = student.name;
+                        candidates.push(n.first ?? n.firstName ?? '');
+                        candidates.push(n.last ?? n.lastName ?? '');
+                        candidates.push(n.preferred ?? '');
+                    }
+
+                    // other common fields
+                    candidates.push(student.firstName ?? '');
+                    candidates.push(student.lastName ?? student.last ?? '');
+                    candidates.push(student.prefix ?? '');
+
+                    // join and attempt a substring check across the combined candidate strings
+                    for (const c of candidates) {
+                        if (!c) continue;
+                        if (String(c).toLowerCase().includes(q)) return true;
+                    }
+
+                    return false;
+                }
+
+                const visible = introductions.filter(s => matchesName(s, q));
+
+                if (q && visible.length === 0) {
+                    return <div className="introductions-empty">No students match "{nameSearch}"</div>;
+                }
+                // when slideshow mode is on, only render the current visible index
+                if (slideshowOn) {
+                    // clamp slideshowIndex safely
+                    const count = visible.length;
+                    if (count === 0) return <div className="introductions-empty">No students to show in slideshow</div>;
+                    const idx = ((slideshowIndex % count) + count) % count;
+                    const s = visible[idx];
+
+                    // render the single student card (we largely reuse the same card render below)
+                    const student = s;
+                    const i = idx;
+
+                    // provide slideshow navigation controls above the card
+                    return (
+                        <div key={`slideshow-${student.id ?? i}`}>
+                            <div className="slideshow-controls">
+                                <button
+                                    className="slideshow-btn"
+                                    onClick={() => {
+                                        setSlideshowIndex(prev => (prev - 1 + visible.length) % visible.length);
+                                    }}
+                                >Previous</button>
+                                <span className="slideshow-indicator">{idx + 1} / {visible.length}</span>
+                                <button
+                                    className="slideshow-btn"
+                                    onClick={() => {
+                                        setSlideshowIndex(prev => (prev + 1) % visible.length);
+                                    }}
+                                >Next</button>
+                            </div>
+                            <article key={student.id ?? i} className="introduction-card">
+                                {/* (content of card rendered below — to avoid duplicating code, we leverage the same rendering logic by falling-through and mapping one item) */}
+                                {/* We'll render the card using the same logic as the normal map below by building the needed variables inline */}
+                                {/* Determine name pieces — tolerate different schemas */}
+                                {(() => {
+                                    const fullName = getFullName(student) || `Student ${i + 1}`;
+
+                                    // Image fallback logic (same as below)
+                                    let imgSrc = "";
+                                    if (student.media && student.media.src) {
+                                        const src = student.media.src;
+                                        if (src.startsWith('http')) imgSrc = src;
+                                        else if (src.startsWith('/')) imgSrc = baseUrl ? `${baseUrl}${src}` : src;
+                                        else if (/^(assets|media)\//.test(src)) imgSrc = baseUrl ? `${baseUrl}/${src}` : `/${src}`;
+                                        else imgSrc = baseUrl ? `${baseUrl}/${src}` : `/${src}`;
+                                    } else if (student.photo) {
+                                        imgSrc = student.photo;
+                                    }
+
+                                    const imgAlt = (student.media && (student.media.caption || student.media.alt)) || student.photoAlt || `${fullName}`;
+
+                                    const backgrounds = student.backgrounds ?? {};
+                                    const primaryDevice = student.platform?.device ?? student.primaryComputer ?? student.primaryDevice;
+
+                                    const quoteText = typeof student.quote === 'string' ? student.quote : student.quote?.text ?? student.favoriteQuote ?? student.quoteText;
+                                    const quoteAuthor = student.quote?.author ?? student.quoteBy ?? student.quoteAuthor;
+
+                                    const courses = getCoursesForStudent(student);
+
+                                    return (
+                                        <>
+                                            {(showName || showMascot) ? (
+                                                <h3>
+                                                    {showName ? fullName : null}
+                                                    {(showName && showMascot && student.divider) ? <span className="divider-inline"> {student.divider} </span> : null}
+                                                    {showMascot && student.mascot ? <span className="mascot"> {student.mascot}</span> : null}
+                                                </h3>
+                                            ) : null}
+
+                                            {showImage && imgSrc && (student.media?.hasImage ?? true) ? (
+                                                <figure>
+                                                    <img width="534" height="534" src={imgSrc} onError={(e) => {
+                                                        try {
+                                                            const orig = student.media?.src || '';
+                                                            if (!e.target._triedRemote) {
+                                                                e.target._triedRemote = true;
+                                                                if (!orig.startsWith('http')) {
+                                                                    const origin = baseUrl ?? 'https://dvonb.xyz';
+                                                                    const candidate = orig.startsWith('/') ? `${origin}${orig}` : `${origin}/${orig}`;
+                                                                    e.target.src = candidate;
+                                                                }
+                                                            }
+                                                        } catch (err) {}
+                                                    }} alt={imgAlt} />
+
+                                                    {(student.media?.caption || student.photoAlt || student.media?.alt) ? (
+                                                        <figcaption className="image-caption">{student.media?.caption ?? student.photoAlt ?? student.media?.alt}</figcaption>
+                                                    ) : null}
+                                                </figure>
+                                            ) : null}
+
+                                            {showStatement && getStatement(student) ? (
+                                                <p>
+                                                    <strong>Personal Statement:</strong> {getStatement(student)}
+                                                </p>
+                                            ) : null}
+
+                                            <ul>
+                                                {showBackgrounds && backgrounds.personal ? (
+                                                    <li>
+                                                        <strong>Personal Background:</strong> {backgrounds.personal}
+                                                    </li>
+                                                ) : null}
+
+                                                {showBackgrounds && (backgrounds.academic || student.academicBackground || student.academic) ? (
+                                                    <li>
+                                                        <strong>Academic Background:</strong> {backgrounds.academic ?? student.academicBackground ?? student.academic}
+                                                    </li>
+                                                ) : null}
+
+                                                {showBackgrounds && (backgrounds.professional || student.professionalBackground || student.professional) ? (
+                                                    <li>
+                                                        <strong>Professional Background:</strong> {backgrounds.professional ?? student.professionalBackground ?? student.professional}
+                                                    </li>
+                                                ) : null}
+
+                                                {showBackgrounds && (primaryDevice) ? (
+                                                    <li>
+                                                        <strong>Primary Computer:</strong> {primaryDevice}
+                                                    </li>
+                                                ) : null}
+
+                                                {showBackgrounds ? (
+                                                <li>
+                                                    <strong>Courses I’am Taking and Why</strong>
+                                                    {Array.isArray(courses) && courses.length > 0 ? (
+                                                        <ol>
+                                                            {courses.map((course, idx) => (
+                                                                <li key={idx}><strong>{typeof course === 'string' ? course : course.code ?? course.name ?? `Course ${idx+1}`}</strong>{typeof course === 'object' && (course.reason || course.description) ? ` : ${course.reason ?? course.description}` : ''}</li>
+                                                            ))}
+                                                        </ol>
+                                                    ) : (
+                                                        <div>No courses listed.</div>
+                                                    )}
+                                                </li>
+                                                ) : null}
+
+                                                {showQuote && quoteText ? (
+                                                    <li>
+                                                        <strong>Quote:</strong>
+                                                        <div>
+                                                            {quoteText}
+                                                            {quoteAuthor ? (<p><em>- {quoteAuthor}</em></p>) : null}
+                                                        </div>
+                                                    </li>
+                                                ) : null}
+
+                                                {showLinks && student.links && typeof student.links === 'object' ? (
+                                                    <li>
+                                                        <strong>Links:</strong>{' '}
+                                                        {Object.entries(student.links).map(([k, v], idx, arr) => (
+                                                            <span key={k}><a href={v} target="_blank" rel="noreferrer">{k}</a>{idx < arr.length - 1 ? ' | ' : ''}</span>
+                                                        ))}
+                                                    </li>
+                                                ) : null}
+                                            </ul>
+                                        </>
+                                    );
+                                })()}
+                            </article>
+                        </div>
+                    );
+                }
+
+                return visible.map((student, i) => {
                 // Determine name pieces — tolerate different schemas
                 const fullName = getFullName(student) || `Student ${i + 1}`;
+                // we prefer the full name in the heading
 
                 // Image fallback logic
                 let imgSrc = "";
@@ -191,14 +454,23 @@ export default function JsonIntroductions() {
 
                 return (
                     <article key={student.id ?? i} className="introduction-card">
-                        <h3>{fullName}</h3>
+                        {/* show heading if either name or mascot is enabled */}
+                        {(showName || showMascot) ? (
+                            <h3>
+                                {showName ? fullName : null}
+                                {/* inline divider shows only when both name and mascot are visible */}
+                                {(showName && showMascot && student.divider) ? <span className="divider-inline"> {student.divider} </span> : null}
+                                {showMascot && student.mascot ? <span className="mascot"> {student.mascot}</span> : null}
+                            </h3>
+                        ) : null}
 
-                        {imgSrc && (student.media?.hasImage ?? true) ? (
-                            <img
-                                width="534"
-                                height="534"
-                                src={imgSrc}
-                                onError={(e) => {
+                        {showImage && imgSrc && (student.media?.hasImage ?? true) ? (
+                            <figure>
+                                <img
+                                    width="534"
+                                    height="534"
+                                    src={imgSrc}
+                                    onError={(e) => {
                                     // if the image fails to load and it's a root-relative path, try the remote host fallback
                                     try {
                                         const orig = student.media?.src || '';
@@ -215,12 +487,17 @@ export default function JsonIntroductions() {
                                         // swallow
                                     }
                                 }}
-                                alt={imgAlt}
-                            />
+                                    alt={imgAlt}
+                                />
+                                {/* caption (if available) — prefer media.caption then alt text */}
+                                {(student.media?.caption || student.photoAlt || student.media?.alt) ? (
+                                    <figcaption className="image-caption">{student.media?.caption ?? student.photoAlt ?? student.media?.alt}</figcaption>
+                                ) : null}
+                            </figure>
                         ) : null}
 
                         {/* Personal Statement (try both spellings) */}
-                        {getStatement(student) ? (
+                        {showStatement && getStatement(student) ? (
                             <p>
                                 <strong>Personal Statement:</strong> {getStatement(student)}
                             </p>
@@ -228,47 +505,49 @@ export default function JsonIntroductions() {
 
                             <ul>
                             {/* optional background fields */}
-                            {backgrounds.personal ? (
+                            {showBackgrounds && backgrounds.personal ? (
                                 <li>
                                     <strong>Personal Background:</strong> {backgrounds.personal}
                                 </li>
                             ) : null}
 
-                            {backgrounds.academic || student.academicBackground || student.academic ? (
+                            {showBackgrounds && (backgrounds.academic || student.academicBackground || student.academic) ? (
                                 <li>
                                     <strong>Academic Background:</strong> {backgrounds.academic ?? student.academicBackground ?? student.academic}
                                 </li>
                             ) : null}
 
-                            {backgrounds.professional || student.professionalBackground || student.professional ? (
+                            {showBackgrounds && (backgrounds.professional || student.professionalBackground || student.professional) ? (
                                 <li>
                                     <strong>Professional Background:</strong> {backgrounds.professional ?? student.professionalBackground ?? student.professional}
                                 </li>
                             ) : null}
 
-                            {(primaryDevice) ? (
+                            {showBackgrounds && (primaryDevice) ? (
                                 <li>
                                     <strong>Primary Computer:</strong> {primaryDevice}
                                 </li>
                             ) : null}
 
+                            {showBackgrounds ? (
                             <li>
                                 <strong>Courses I’am Taking and Why</strong>
                                 {Array.isArray(courses) && courses.length > 0 ? (
-                                    <ul>
+                                    <ol>
                                         {courses.map((course, idx) => (
                                             <li key={idx}>
                                                 <strong>{typeof course === 'string' ? course : course.code ?? course.name ?? `Course ${idx+1}`}</strong>
                                                 {typeof course === 'object' && (course.reason || course.description) ? ` : ${course.reason ?? course.description}` : ''}
                                             </li>
                                         ))}
-                                    </ul>
+                                    </ol>
                                 ) : (
                                     <div>No courses listed.</div>
                                 )}
                             </li>
+                            ) : null}
 
-                            {quoteText ? (
+                            {showQuote && quoteText ? (
                                 <li>
                                     <strong>Quote:</strong>
                                     <div>
@@ -283,7 +562,7 @@ export default function JsonIntroductions() {
                             ) : null}
 
                             {/* optional links */}
-                            {student.links && typeof student.links === 'object' ? (
+                            {showLinks && student.links && typeof student.links === 'object' ? (
                                 <li>
                                     <strong>Links:</strong>{' '}
                                     {Object.entries(student.links).map(([k, v], idx, arr) => (
@@ -295,10 +574,12 @@ export default function JsonIntroductions() {
                             ) : null}
                         </ul>
 
-                        <div className="divider" />
+                        {/* show divider only when both name and mascot are visible */}
+                        {(showName && showMascot) ? <div className="divider" /> : null}
                     </article>
                 );
-            })}
+                });
+            })()}
         </main>
     );
 }

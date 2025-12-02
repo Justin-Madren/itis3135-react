@@ -187,3 +187,131 @@ th, td{
         max-width: 70%;
     }
 }
+
+figure{
+    /* full-width container so images and captions can center properly */
+    display: block;
+    width: 100%;
+    margin: 0 0 12px 0; /* spacing below the figure */
+    text-align: center; /* center image + caption */
+}
+
+.image-caption{
+    text-align: center;
+    font-style: italic;
+    font-size: 0.95rem;
+    margin-top: 6px;
+}
+
+.divider-inline{
+    margin: 0 8px;
+    color: #333;
+    font-weight: 700;
+}
+
+.mascot{
+    /* match the heading's exact styling (same size, weight, and color) */
+    color: inherit;
+    font-weight: inherit; /* match h3 font-weight */
+    font-size: inherit;   /* match h3 font-size */
+    line-height: inherit; /* keep visual alignment with the name */
+    margin-left: 6px; /* space slightly after divider */
+    opacity: 1;
+}
+
+/* space between the content and the bottom dividing rule */
+.introduction-card{
+    padding-bottom: 1.25rem; /* keep some breathing room above the divider */
+}
+
+.divider{
+    margin-top: 1rem; /* move the dividing rule away from the content */
+}
+
+/* Toggle controls at top of the introductions list */
+.toggle-controls{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: center;
+    margin: 12px 0 18px 0;
+}
+
+.toggle-btn{
+    padding: 6px 10px;
+    border-radius: 6px;
+    border: 1px solid rgba(0,0,0,0.2);
+    background: #fff;
+    cursor: pointer;
+    font-family: inherit;
+}
+
+.toggle-btn.active{
+    background: darkgreen;
+    color: white;
+    border-color: rgba(0,0,0,0.35);
+}
+
+.toggle-btn:hover{ opacity: 0.95 }
+
+/* slideshow controls */
+.slideshow-controls{
+    display:flex;
+    gap:12px;
+    align-items:center;
+    justify-content:center;
+    margin: 12px 0;
+}
+
+.slideshow-btn{
+    padding: 8px 12px;
+    border-radius: 6px;
+    border: 1px solid rgba(0,0,0,0.2);
+    background: #fff;
+    cursor: pointer;
+}
+.slideshow-btn:hover{ background: #f0f0f0 }
+
+.slideshow-indicator{
+    font-weight: 700;
+    color: #333;
+}
+
+/* search bar matching page styling */
+.search-row{
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    justify-content: center;
+    margin: 14px 0 22px 0;
+    flex-wrap: wrap;
+}
+
+.search-label{
+    font-weight: 600;
+    font-family: 'Inter', Courier, monospace;
+}
+
+.search-input{
+    width: 360px;
+    max-width: 90%;
+    padding: 8px 12px;
+    border-radius: 8px;
+    border: 2px solid #333;
+    font-size: 1rem;
+    font-family: inherit;
+    box-shadow: 0 2px 0 rgba(0,0,0,0.04);
+    transition: box-shadow 120ms ease, transform 120ms ease;
+}
+
+.search-input:focus{
+    outline: none;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.12);
+    transform: translateY(-1px);
+    border-color: darkgreen;
+}
+
+.search-status{
+    color: #333;
+    font-size: 0.95rem;
+}
